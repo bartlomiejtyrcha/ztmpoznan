@@ -33,10 +33,13 @@ linki$file_www = str_c("https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile
 linki = linki[-nrow(linki),]
 dir.create("dane")
 getwd() 
-
+#linki$`Nazwa pliku`[3]
+linki[7,5]
+#as.character(linki[7,5])
 ######### TO POBIERA WSZYSTKIE PLIKI UWAGA XD
+str_c(paste0(getwd(), "/dane2/"), linki$`Nazwa pliku`[i])
 for(i in 1:length((linki$`Nazwa pliku`))){
-  download.file(linki[i,5], destfile=str_c("./dane2/", linki$`Nazwa pliku`[i]))
+  download.file(as.character(linki[i,5]), destfile=str_c(paste0(getwd(), "/dane2/"), linki$`Nazwa pliku`[i]))
 } #pętla pobierania
 
 c(4,5,6,7)[2]
