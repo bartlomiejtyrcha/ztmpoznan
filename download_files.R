@@ -36,7 +36,7 @@ getwd()
 
 ######### TO POBIERA WSZYSTKIE PLIKI UWAGA XD
 for(i in 1:length((linki$`Nazwa pliku`))){
-  download.file(linki[i,5], destfile=str_c("F:/PROJEKTY/R/ztm/dane/", linki$`Nazwa pliku`[i]))
+  download.file(linki[i,5], destfile=str_c("./dane2/", linki$`Nazwa pliku`[i]))
 } #pętla pobierania
 
 c(4,5,6,7)[2]
