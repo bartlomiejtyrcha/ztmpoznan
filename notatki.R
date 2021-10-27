@@ -17,7 +17,7 @@ shapes = read.delim2(temp[6], sep=",")
 stop_times = read.delim2(temp[7], sep=",")
 stops = read.delim2(temp[8], sep=",")
 trips = read.delim2(temp[9], sep=",")
-
+View(trips)
 
 #agency
 View(agency)
