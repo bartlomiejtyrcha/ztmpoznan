@@ -19,7 +19,7 @@ ztm_download = function(rekordy = 1, path = getwd()){
     # rozpakowanie go do folderu o tej samej nazwie
     unzip(stringr::str_c(path, "/dane/", linki$`Nazwa pliku`[i]), 
           exdir = stringr::str_c(path, "/dane/",
-                                 stringr::str_sub(linki$`Nazwa pliku`[i], 1, 17)))
+                                 stringr::str_sub(linki$`Nazwa pliku`[i], 1, -4)))
     # usunięcie starego zipa
     file.remove(stringr::str_c(path, "/dane/", linki$`Nazwa pliku`[i]))
   }
