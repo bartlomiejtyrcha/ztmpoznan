@@ -5,7 +5,7 @@ ztm_download = function(rekordy = 1, path = getwd()){
   strona = xml2::read_html("https://www.ztm.poznan.pl/pl/dla-deweloperow/gtfsFiles")
   linki = rvest::html_table(strona)[[2]]
   # stworzenie linków pobierających pliki
-  linki$file_www = str_c("https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=", linki$`Nazwa pliku`)
+  linki$file_www = stringr::str_c("https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile/?file=", linki$`Nazwa pliku`)
   
   # sprawdzenie czy folder 'dane' istnieje żeby nei było ewentualnych kolizji
   if (dir.exists("dane") == FALSE){
@@ -17,10 +17,18 @@ ztm_download = function(rekordy = 1, path = getwd()){
     # pobranie pliku do folderu 'dane'
     download.file(linki$file_www[i], destfile = stringr::str_c(path, "/dane/", linki$`Nazwa pliku`[i]))
     # rozpakowanie go do folderu o tej samej nazwie
+    dest = stringr::str_c(path, "/dane/", stringr::str_sub(linki$`Nazwa pliku`[i], 1, -4))
+    message("Rozpakowywanie plików...")
     unzip(stringr::str_c(path, "/dane/", linki$`Nazwa pliku`[i]), 
-          exdir = stringr::str_c(path, "/dane/",
-                                 stringr::str_sub(linki$`Nazwa pliku`[i], 1, -4)))
+          exdir = dest)
     # usunięcie starego zipa
     file.remove(stringr::str_c(path, "/dane/", linki$`Nazwa pliku`[i]))
+  }
+  
+  if (rekordy == 1){
+    if_read = readline("Wybrałeś tylko jeden plik. Czy wczytać od razu dane jako obiekty? (T/N):   ")
+    if (if_read == "T"){
+      ztm_read(dest)
+    }
   }
 }
