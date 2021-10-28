@@ -56,3 +56,6 @@ plot(stops_sf)
 mapview(stops_sf)
 View(stop_times)
 # 
+
+# dołączenie numeru linii do kształtu
+shapes_sf = dplyr::left_join(shapes_sf, trips %>% dplyr::select(route_id, shape_id), by = "shape_id")

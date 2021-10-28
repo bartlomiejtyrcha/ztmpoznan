@@ -16,7 +16,7 @@ ztm_read = function(path){
   if (if_sf == "T"){
     shapes_sf = sf::st_as_sf(shapes, coords = c("shape_pt_lon", "shape_pt_lat"))
     shapes_sf = sf::st_set_crs(shapes_sf, 4326)
-    shapes_sf <<- sf::st_cast(dplyr::summarise(dplyr::group_by(shapes_sf, shape_id), do_union = FALSE), "LINESTRING")
+    shapes_sf = sf::st_cast(dplyr::summarise(dplyr::group_by(shapes_sf, shape_id), do_union = FALSE), "LINESTRING")
     shapes_sf <<- sf::st_set_crs(shapes_sf, 4326)
     message("Stworzono obiekt shapes_sf")
     
