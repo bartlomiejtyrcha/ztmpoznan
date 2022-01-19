@@ -1,8 +1,8 @@
 library(dplyr)
 library(mapview)
 library(sf)
-#install.packages('mapview')
 library(mapview)
+library(stringr)
 
 stops20181214_20181216 = read.delim2("unzip_files/20181214_20181216/stops.txt", sep=",")
 View(stops20181214_20181216)
@@ -53,8 +53,29 @@ stops_sf = st_as_sf(stops, coords = c("stop_lon", "stop_lat"))
 stops_sf = st_set_crs(stops_sf, 4326)
 View(stops_sf)
 plot(stops_sf)
-mapview(stops_sf)
+mapview(stops_sf, zcol = "zone_id")
 View(stop_times)
+
+# liczba kursów na danym przystanku
+stops2 = inner_join(stops_sf, stop_times, by = "stop_id")
+stops2 = stops2 %>% group_by(stop_id, stop_name) %>% summarise(n = n())
+mapview(stops2, zcol = "n")
+
+# liczba linii dziennych na danym przystanku a także ich wypisanie
+trips_day = trips[str_sub(trips$route_id, 1, 1) != 2 | (str_sub(trips$route_id, 1, 1) == 2 & str_length(trips$route_id) == 1), ]
+stops3 = stops_sf %>% left_join(stop_times, by = "stop_id") %>% left_join(trips_day, by = "trip_id") %>% select(stop_id, stop_name, route_id)
+stops3 = na.omit(stops3)
+stops3 = stops3 %>% group_by(stop_id, stop_name) %>%
+  summarise(n = length(unique(route_id)), linie = paste(as.character(unique(route_id)), collapse = ", "))
+mapview(stops3, zcol = "n")
+
+# liczba linii nocnych na danym przystanku a także ich wypisanie
+trips_night = trips[!(str_sub(trips$route_id, 1, 1) != 2 | (str_sub(trips$route_id, 1, 1) == 2 & str_length(trips$route_id) == 1)), ]
+stops4 = stops_sf %>% left_join(stop_times, by = "stop_id") %>% left_join(trips_night, by = "trip_id") %>% select(stop_id, stop_name, route_id)
+stops4 = na.omit(stops4)
+stops4 = stops4 %>% group_by(stop_id, stop_name) %>%
+  summarise(n = length(unique(route_id)), linie = paste(as.character(unique(route_id)), collapse = ", "))
+mapview(stops4, zcol = "n")
 # 
 
 # dołączenie numeru linii do kształtu
