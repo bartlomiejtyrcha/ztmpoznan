@@ -56,10 +56,20 @@ plot(stops_sf)
 mapview(stops_sf, zcol = "zone_id")
 View(stop_times)
 
-# liczba kursów na danym przystanku
-stops2 = inner_join(stops_sf, stop_times, by = "stop_id")
-stops2 = stops2 %>% group_by(stop_id, stop_name) %>% summarise(n = n())
-mapview(stops2, zcol = "n")
+# liczba kursów na danym przystanku w poszczególne dni tygodnia
+lista = list("nie" = 9, "sob" = 3, "pia" = 7, "wt-sr-czw" = 1, "pon" = 5)
+rm(stops2)
+for (i in seq_along(lista)){
+  x = inner_join(stops_sf, stop_times[str_sub(stop_times$trip_id, 1, 1) == lista[[i]],], by = "stop_id")
+  if (exists("stops2") == FALSE){
+    stops2 = x %>% group_by(stop_id, stop_name) %>% summarise()
+  }
+  stops2 = x %>% st_drop_geometry() %>% group_by(stop_id, stop_name) %>% summarise(n = n()) %>% select(n) %>% left_join(stops2, by = "stop_id")
+  names(stops2)[2] = names(lista)[i]
+  stops2 = relocate(stops2, stop_name, .after = stop_id)
+}
+stops2 = st_as_sf(stops2)
+mapview(stops2, zcol = "wt-sr-czw", col.regions = RColorBrewer::brewer.pal(11, "RdYlGn"), at = c(0, 25, 50, 100, 300, 500, 800))
 
 # liczba linii dziennych na danym przystanku a także ich wypisanie
 trips_day = trips[str_sub(trips$route_id, 1, 1) != 2 | (str_sub(trips$route_id, 1, 1) == 2 & str_length(trips$route_id) == 1), ]
